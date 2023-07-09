@@ -5,6 +5,9 @@ import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 
 const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const pathName = usePathname();
   const [copied, setCopied] = useState("");
   const handleCopy = () => {
     setCopied(post.prompt);
@@ -54,9 +57,27 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
           className="font-inter text-sm blue_gradient cursor-pointer"
           onClick={() => handleTagClick && handleTagClick(post.tag)}
         >
-          {post.tag}
+          #{post.tag}
         </p>
       </p>
+
+      {/* check if the session user is same as post creator and if they are on the profile page */}
+      {session?.user.id === post.creator._id && pathName === "/profile" && (
+        <div className="mt-5 flex justify-end gap-6 flex-between border-t border-gray-100 pt-3">
+          <p
+            className="font-inter text-sm text-gray-500 cursor-pointer"
+            onClick={handleDelete}
+          >
+            Delete
+          </p>
+          <p
+            className="font-inter text-sm text-green-700 cursor-pointer"
+            onClick={handleEdit}
+          >
+            Edit Prompt
+          </p>
+        </div>
+      )}
     </div>
   );
 };
